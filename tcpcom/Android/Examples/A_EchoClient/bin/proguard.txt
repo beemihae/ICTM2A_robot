@@ -1,0 +1,9 @@
+# view AndroidManifest.xml #generated:15
+-keep class ch.aplu.android.ConsoleActivity { <init>(...); }
+
+# view res/layout/main.xml #generated:13
+-keep class ch.aplu.android.MySurfaceView { <init>(...); }
+
+# view AndroidManifest.xml #generated:8
+-keep class ch.aplu.echoclient.EchoClient { <init>(...); }
+
