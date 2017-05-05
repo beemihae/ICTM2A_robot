@@ -61,6 +61,9 @@ import java.util.ListIterator;
 import java.util.Scanner;
 import java.util.List.*;
 
+// sensor werkt niet, totaal niet.
+// terugkoppeling bij detectie naar pathplanning
+
 public class Pilot {
 	static RobotPilot pilot;
 	static WheeledChassis chassis;
