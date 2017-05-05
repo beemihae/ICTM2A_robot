@@ -76,15 +76,70 @@ public class Pilot {
 	static Waypoint goal;
 	static IRSensor sensor;
 	static boolean destinationReached = false;
+	static int maxdistance;
+	static boolean Objectdetected;
+	
 
-	/**
-	 * 
-	 * WAT MOET NOG GEIMPLEMENTEERD WORDEN: EV3NAVIGATIONMODEL
-	 * 
-	 * @return
-	 */
+	public static void main(String[] args) {
+		createPilot();
+		System.out.println("Pilot created");
+		pilot.setLinearSpeed(1000);
+		pilot.setAngularSpeed(1000);
+		// pilot.rotate(30);
 
-	static ArrayList<float[]> getWaypoints() { /**
+		// float[][] boundingPoints = new
+		// float[][]{{11f,5f},{105f,5f},{105f,115f},{11f,115f}};
+		//ArrayList<float[][]> contouren = new ArrayList<float[][]>();
+		//contouren.add(new float[][] { { 175f, 200f }, { 300f, 225f }, { 250f, 325f }, { 100f, 225f } });
+		
+		goal = new Waypoint(new lejos.robotics.geometry.Point(1000f, 300f));
+		
+		createNavigator();
+		updatePose();
+		System.out.println("Navigator created");
+		
+		//updateMap(1152f, 2289f);
+		//updateMesh();
+		
+		try {
+			updatePath(1152f, 2289f);
+			System.out.println("Path updated");
+		} catch (DestinationUnreachableException e) {
+			System.out.println("Destination of robot is unreachable");
+		}
+
+		kapitein.setPath(currentPath);
+
+		//float[][] points = new float[currentPath.size()][2];
+		//for (int i = 0; i < points.length; i++) {
+		//	points[i] = new float[] { currentPath.get(i).x, currentPath.get(i).y };
+		//}
+		//Line[] pathLines = new Line[points.length - 1];
+		//for (int i = 0; i < pathLines.length; i++) {
+		//	pathLines[i] = new Line(points[i][0], points[i][1], points[i + 1][0], points[i + 1][1]);
+		//}
+		//LineMap paddd = new LineMap(pathLines, new Rectangle(0, 0, 1152, 2289));
+		//try {
+		//	paddd.createSVGFile("path.svg");
+		//} catch (IOException e) {
+			// TODO Auto-generated catch block
+		//	e.printStackTrace();
+		//}
+
+		sensor = new IRSensor();
+		Behavior b1 = new DoPath();
+		// Behavior b2 = new DetectObstacle();
+		
+		Arbitrator arbitrator = new Arbitrator(new Behavior[] { b1 });
+		arbitrator.go();
+
+	}
+}
+		public void SensorRun(){
+		
+		}
+
+		static ArrayList<float[]> getWaypoints() { /**
 												 * geeft Arraylist van [x,y]
 												 * coordinaten van waypoints van
 												 * current path
@@ -204,56 +259,7 @@ public class Pilot {
 		updatePath();
 	}
 
-	public static void main(String[] args) {
-		createPilot();
-		System.out.println("Pilot created");
-		pilot.setLinearSpeed(100);
-		pilot.setAngularSpeed(100);
-		// pilot.rotate(30);
-
-		// float[][] boundingPoints = new
-		// float[][]{{11f,5f},{105f,5f},{105f,115f},{11f,115f}};
-		ArrayList<float[][]> contouren = new ArrayList<float[][]>();
-		//contouren.add(new float[][] { { 175f, 200f }, { 300f, 225f }, { 250f, 325f }, { 100f, 225f } });
-		goal = new Waypoint(new lejos.robotics.geometry.Point(1000f, 300f));
-		createNavigator();
-		updatePose();
-		System.out.println("Navigator created");
-		//updateMap(1152f, 2289f);
-		//updateMesh();
-		try {
-			updatePath(1152f, 2289f);
-			System.out.println("Path updated");
-		} catch (DestinationUnreachableException e) {
-			System.out.println("Destination of robot is unreachable");
-		}
-
-		kapitein.setPath(currentPath);
-
-		float[][] points = new float[currentPath.size()][2];
-		for (int i = 0; i < points.length; i++) {
-			points[i] = new float[] { currentPath.get(i).x, currentPath.get(i).y };
-		}
-		Line[] pathLines = new Line[points.length - 1];
-		for (int i = 0; i < pathLines.length; i++) {
-			pathLines[i] = new Line(points[i][0], points[i][1], points[i + 1][0], points[i + 1][1]);
-		}
-		LineMap paddd = new LineMap(pathLines, new Rectangle(0, 0, 1152, 2289));
-		try {
-			paddd.createSVGFile("path.svg");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		sensor = new IRSensor();
-		Behavior b1 = new DoPath();
-		// Behavior b2 = new DetectObstacle();
-		Arbitrator arbitrator = new Arbitrator(new Behavior[] { b1 });
-		arbitrator.go();
-
-	}
-}
+	
 
 class RobotPilot extends MovePilot {
 	RegulatedMotor sensorMotor;
@@ -301,7 +307,7 @@ class DoPath implements Behavior {
 		System.out.println("Destination reached");
 		Pilot.kapitein.clearPath();
 		Pilot.destinationReached = true;
-		suppress();
+		//suppress();
 	}
 
 	public void suppress() {
