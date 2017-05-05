@@ -125,6 +125,8 @@ public class Pilot {
 	static void updateMap(float width, float height, ArrayList<float[][]> contours) {
 		Rectangle boundingRect = new Rectangle(0, 0, width, height);
 		ArrayList<Line> lines = new ArrayList<Line>();
+		TCPClient client = new TCPClient();
+		lines = client.getLines();
 		/*
 		 * for (Iterator<float[][]> iterator = ( contours.iterator());
 		 * iterator.hasNext();) { // voor elke contour ArrayList<float[]> points
@@ -143,7 +145,7 @@ public class Pilot {
 		 * System.out.println(lines.get(i).x2);
 		 * System.out.println(lines.get(i).y2); System.out.println("\n");
 		 */
-		try {
+		/*try {
 			System.out.println("read lines");
 			File x = new File("Lines.txt");
 			Scanner sc = new Scanner(x);
@@ -170,7 +172,7 @@ public class Pilot {
 			sc.close();
 		} catch (FileNotFoundException e) {
 			System.out.println("File not found");
-		}
+		}*/
 		currentMap = new LineMap(lines.toArray(new Line[lines.size()]), new Rectangle(0, 0, width, height));
 
 		try {
