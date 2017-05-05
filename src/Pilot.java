@@ -76,7 +76,7 @@ public class Pilot {
 	static Waypoint goal;
 	static IRSensor sensor;
 	static boolean destinationReached = false;
-
+	static TCPClient client = new TCPClient();
 	/**
 	 * 
 	 * WAT MOET NOG GEIMPLEMENTEERD WORDEN: EV3NAVIGATIONMODEL
@@ -106,26 +106,44 @@ public class Pilot {
 		Wheel rightwheel = WheeledChassis.modelWheel(Motor.C, 54.8).invert(true).offset(76);
 		chassis = new WheeledChassis(new Wheel[] { leftwheel, rightwheel }, WheeledChassis.TYPE_DIFFERENTIAL);
 		pilot = new RobotPilot(chassis, Motor.A);
+<<<<<<< HEAD
 		pilot.setAngularSpeed(300);
 		pilot.setLinearSpeed(1000);
 		//pilot.setMinRadius(radius);
 	}
 
 	static void createNavigator() {
+=======
+		pilot.setAngularSpeed(100);
+		pilot.setLinearSpeed(300);
+	}
+
+	static void createNavigator() {
+		ppv = new OdometryPoseProvider(pilot);
+		ppv.setPose(currentPose);
+>>>>>>> origin/master
 		kapitein = new Navigator(pilot);
 	}
 
 	static void updatePose() {
 		// moet aangevuld worden met code van imageprocessing
+<<<<<<< HEAD
 		TCPClient Pose = new TCPClient("position");
 		currentPose = Pose.getPosition();
 		System.out.println(currentPose.toString());
+=======
+		currentPose = new Pose(/* hier komt code van imageprocessing */);
+		
+>>>>>>> origin/master
 		kapitein.getPoseProvider().setPose(currentPose);
 	}
 
 	static void updateMap(float width, float height) {
 		ArrayList<Line> lines = new ArrayList<Line>();
+<<<<<<< HEAD
 		TCPClient client = new TCPClient("map");
+=======
+>>>>>>> origin/master
 		lines = client.getLines();
 		/*
 		 * for (Iterator<float[][]> iterator = ( contours.iterator());
@@ -198,7 +216,9 @@ public class Pilot {
 
 	static void updatePath(float width, float height)
 			throws DestinationUnreachableException {
+
 		updatePose();
+
 		updateMap(width, height);
 		updateMesh();
 		updatePath();
@@ -207,21 +227,22 @@ public class Pilot {
 	public static void main(String[] args) {
 		createPilot();
 		System.out.println("Pilot created");
-		pilot.setLinearSpeed(100);
-		pilot.setAngularSpeed(100);
 		// pilot.rotate(30);
 
 		// float[][] boundingPoints = new
 		// float[][]{{11f,5f},{105f,5f},{105f,115f},{11f,115f}};
+
 		ArrayList<float[][]> contouren = new ArrayList<float[][]>();
 		//contouren.add(new float[][] { { 175f, 200f }, { 300f, 225f }, { 250f, 325f }, { 100f, 225f } });
+
 		goal = new Waypoint(new lejos.robotics.geometry.Point(1000f, 300f));
 		createNavigator();
 		updatePose();
 		System.out.println("Navigator created");
+
 		//updateMap(1152f, 2289f);
 		//updateMesh();
-		try {
+try {
 			updatePath(1152f, 2289f);
 			System.out.println("Path updated");
 		} catch (DestinationUnreachableException e) {
@@ -230,6 +251,7 @@ public class Pilot {
 
 		kapitein.setPath(currentPath);
 
+		//enkel voor de linemap
 		float[][] points = new float[currentPath.size()][2];
 		for (int i = 0; i < points.length; i++) {
 			points[i] = new float[] { currentPath.get(i).x, currentPath.get(i).y };
@@ -280,7 +302,7 @@ class RobotPilot extends MovePilot {
 			} else if (event.getMoveType().equals(Move.MoveType.ARC)) {
 				//sign = Math.signum(event.getArcRadius());
 				//rotateSensor((int) (sign * angle));
-				angle = 0;
+
 			}
 			;
 		}
