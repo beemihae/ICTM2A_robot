@@ -9,6 +9,7 @@ import lejos.hardware.motor.Motor;
 import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3IRSensor;
 import lejos.robotics.MirrorMotor;
+import lejos.robotics.RangeScanner;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.SampleProvider;
 import lejos.robotics.chassis.Chassis;
@@ -83,8 +84,8 @@ public class Pilot {
 	public static void main(String[] args) {
 		createPilot();
 		System.out.println("Pilot created");
-		pilot.setLinearSpeed(1000);
-		pilot.setAngularSpeed(1000);
+		pilot.setLinearSpeed(600);
+		pilot.setAngularSpeed(600);
 		// pilot.rotate(30);
 
 		// float[][] boundingPoints = new
@@ -127,14 +128,15 @@ public class Pilot {
 		//}
 
 		sensor = new IRSensor();
-		Behavior b1 = new DoPath();
-		// Behavior b2 = new DetectObstacle();
 		
-		Arbitrator arbitrator = new Arbitrator(new Behavior[] { b1 });
+		Behavior b1 = new DoPath();
+		Behavior b2 = new DetectObstacle();
+		
+		Arbitrator arbitrator = new Arbitrator(new Behavior[] { b1,b2 });
+		sensor.start();
 		arbitrator.go();
 
 	}
-}
 		public void SensorRun(){
 		
 		}
@@ -162,7 +164,7 @@ public class Pilot {
 		chassis = new WheeledChassis(new Wheel[] { leftwheel, rightwheel }, WheeledChassis.TYPE_DIFFERENTIAL);
 		pilot = new RobotPilot(chassis, Motor.A);
 		pilot.setAngularSpeed(300);
-		pilot.setLinearSpeed(1000);
+		pilot.setLinearSpeed(600);
 		//pilot.setMinRadius(radius);
 	}
 
@@ -207,7 +209,6 @@ public class Pilot {
 			int[] points = new int[4];
 			int counter = 0;
 			while (sc.hasNext()) {
-
 				// System.out.println(counter);
 				if (counter == 3) {
 					counter = 0;
@@ -219,9 +220,7 @@ public class Pilot {
 				} else {
 					points[counter] = sc.nextInt();
 					counter++;
-
 				}
-
 			}
 			System.out.println("read lines");
 			sc.close();
@@ -258,6 +257,12 @@ public class Pilot {
 		updateMesh();
 		updatePath();
 	}
+	
+	static void doPath() {
+		
+	}
+	
+}
 
 	
 
@@ -274,6 +279,7 @@ class RobotPilot extends MovePilot {
 	public void rotateSensor(int angle) {
 		sensorMotor.rotate(angle);
 	}
+	
 
 	class RotationListener implements MoveListener {
 		private int angle = 45; // sensor zal over 45 graden draaien
@@ -300,7 +306,7 @@ class RobotPilot extends MovePilot {
 class DoPath implements Behavior {
 
 	public void action() {
-		while (!Pilot.kapitein.pathCompleted()) {
+		while (!Pilot.kapitein.pathCompleted()&&!Pilot.Objectdetected) {
 			Pilot.kapitein.followPath();
 			Thread.yield();
 		}
@@ -315,7 +321,7 @@ class DoPath implements Behavior {
 	}
 
 	public boolean takeControl() {
-		return !Pilot.destinationReached;
+		return !Pilot.destinationReached&&!Pilot.Objectdetected;
 	}
 
 }
@@ -342,7 +348,7 @@ class DetectObstacle implements Behavior {
 	}
 
 	public boolean takeControl() {
-		return Pilot.sensor.distance < 3; // minder dan 50mm van object
+		return Pilot.Objectdetected; // minder dan 50mm van object
 	}
 
 }
@@ -362,6 +368,22 @@ class IRSensor extends Thread {
 			sp.fetchSample(sample, 0);
 			distance = (int) sample[0];
 			// System.out.println(" Distance: " + distance);
+			Pilot.Objectdetected=distance<5;
+			System.out.println(Pilot.Objectdetected);
+			if (Pilot.Objectdetected) {
+				try {
+					Thread.sleep(3000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}			
 
 		}
 
