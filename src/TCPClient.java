@@ -81,7 +81,7 @@ class TCPClient {
 
 	public static Pose getStringtoPosition(String input) {
 		String[] arr = input.split(" ");
-		System.out.println(arr.toString());
+		//System.out.println(arr.toString());
 		Pose position = new Pose(Float.parseFloat(arr[0]), Float.parseFloat(arr[1]), Float.parseFloat(arr[2]));
 		return position;
 
@@ -105,12 +105,11 @@ class TCPClient {
 		Delay.msDelay(2000);
 		BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 		sentence = "map";
-		System.out.println(sentence);
+		System.out.println("GET "+sentence);
 		outToServer.writeBytes(sentence + '\n');
-
+		System.out.println("Request Map sent");
 		modifiedSentence = inFromServer.readLine();
-		// LCD.drawString("En we zin weg eh", 0, 1);
-		System.out.println("points:" + modifiedSentence);
+		
 		lines = getStringtoLines(modifiedSentence);
 		// System.out.println("FROM SERVER: " + modifiedSentence);
 		clientSocket.close();
@@ -126,14 +125,15 @@ class TCPClient {
 		Delay.msDelay(2000);
 		BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 		sentence = "location";
-		System.out.println(sentence);
+		System.out.println("GET "+sentence);
 		outToServer.writeBytes(sentence + '\n');
+		System.out.println("Request Location sent");
 
 		modifiedSentence = inFromServer.readLine();
 		// LCD.drawString("En we zin weg eh", 0, 1);
 		System.out.println("position:" + modifiedSentence);
 		position = getStringtoPosition(modifiedSentence);
-		// System.out.println("FROM SERVER: " + modifiedSentence);
+		
 		clientSocket.close();
 	}
 }
