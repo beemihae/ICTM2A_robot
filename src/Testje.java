@@ -56,10 +56,10 @@ public class Testje {
 		 createPilot();
 		 pilot.setLinearSpeed(100);
 		 pilot.setAngularSpeed(100);
-		 pilot.rotate(-30);
-		 float[][] boundingPoints = new float[][]{{11f,5f},{105f,5f},{105f,115f},{11f,115f}};
-		 ArrayList<float[][]> contouren = new ArrayList<float[][]>();
-		 contouren.add(new float[][]{{35f, 40f},{60f, 45f},{50f, 65f},{20f,50f}});
+		 pilot.rotate(1080);
+		 //float[][] boundingPoints = new float[][]{{11f,5f},{105f,5f},{105f,115f},{11f,115f}};
+		 //ArrayList<float[][]> contouren = new ArrayList<float[][]>();
+		 //contouren.add(new float[][]{{35f, 40f},{60f, 45f},{50f, 65f},{20f,50f}});
 		 //pilot.travel(600);
 		 //pilot.arc(200, 90);
 		 //Behavior b1 = new Drive();

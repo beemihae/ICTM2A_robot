@@ -72,15 +72,15 @@ public class Pilot {
 	static PoseProvider ppv;
 	static LineMap currentMap;
 	static FourWayGridMesh currentMesh;
-	static float gridSpace = 80;
-	static float clearance = 70; // mm // moet nog aangepast worden
+	static float gridSpace = 50;
+	static float clearance = 80; // mm // moet nog aangepast worden
 	static SearchAlgorithm alg = new AstarSearchAlgorithm();
 	static Pose currentPose;  // = new Pose(854.38495f, 1601.0002f, 0f);
 	static Waypoint goal;
 	static boolean destinationReached = false;
-	static float maxdistance = 10; // cm
+	static float maxdistance = 100; // cm
 	static float conversionFactor;
-	static float virtualLineLength = 50; // mm // lengte van virtuele lijn die
+	static float virtualLineLength = 100; // mm // lengte van virtuele lijn die
 											// hij toevoegt bij object detection
 											// via sensor
 	static boolean objectDetected;
@@ -171,14 +171,14 @@ public class Pilot {
 	}
 
 	static void createPilot() {
-		Wheel leftwheel = WheeledChassis.modelWheel(Motor.B, 54.8*conversionFactor).invert(true).offset(-82*conversionFactor);
-		Wheel rightwheel = WheeledChassis.modelWheel(Motor.C, 54.8*conversionFactor).invert(true).offset(82*conversionFactor);
+		Wheel leftwheel = WheeledChassis.modelWheel(Motor.B, 54.8*conversionFactor).invert(true).offset(-76*conversionFactor);
+		Wheel rightwheel = WheeledChassis.modelWheel(Motor.C, 54.8*conversionFactor).invert(true).offset(76*conversionFactor);
 		chassis = new WheeledChassis(new Wheel[] { leftwheel, rightwheel }, WheeledChassis.TYPE_DIFFERENTIAL);
 		pilot = new RobotPilot(chassis, Motor.A);
-		pilot.setAngularSpeed(120);
-		pilot.setLinearSpeed(120);
-		pilot.setAngularAcceleration(150);
-		pilot.setLinearAcceleration(150);
+		pilot.setAngularSpeed(90);
+		pilot.setLinearSpeed(90);
+		pilot.setAngularAcceleration(110);
+		pilot.setLinearAcceleration(110);
 		//pilot.setMinRadius(radius);
 	}
 
@@ -227,10 +227,10 @@ public class Pilot {
 			float y = Pilot.currentPose.getY();
 			float cosa = (float) Math.cos(alpha);
 			float sina = (float) Math.sin(alpha);
-			detectedLines.add(new Line(x + (maxdistance * 10 - virtualLineLength / 2) * cosa,
-					y + (maxdistance * 10 + virtualLineLength / 2) * sina,
-					x + (maxdistance * 10 + virtualLineLength / 2) * cosa,
-					y + (maxdistance * 10 - virtualLineLength / 2) * sina));
+			detectedLines.add(new Line(x + (maxdistance /2 * 10 - virtualLineLength / 2) * cosa,
+					y + (maxdistance /2 * 10 + virtualLineLength / 2) * sina,
+					x + (maxdistance /2 * 10 + virtualLineLength / 2) * cosa,
+					y + (maxdistance /2 * 10 - virtualLineLength / 2) * sina));
 			// geef eventueel object detectedLines door aan server
 
 		}
@@ -306,7 +306,7 @@ class RobotPilot extends MovePilot {
 		public void moveStarted(Move event, MoveProvider mp) {
 			
 			if (event.getMoveType().equals(Move.MoveType.ROTATE)) {
-				angle = (int) event.getAngleTurned()+sensorMotor.getTachoCount();  //oorspronkelijk geen tachocount bijgeteld
+				angle = (int) ((event.getAngleTurned()+sensorMotor.getTachoCount())*1.15);  //oorspronkelijk geen tachocount bijgeteld
 				if (angle > 90) {
 					angle = 90;
 				}
@@ -341,10 +341,7 @@ class RobotPilot extends MovePilot {
 			// stoptime = System.currentTimeMillis();
 			// movetime = movetime + stoptime - starttime;
 			// System.out.println(movetime);
-			if (angle!=0) {
-				rotateSensor(-angle);
-				angle = 0;
-			}
+			
 			// Pilot.voorObstakel =
 			// (Pilot.voorObstakel)&&(movetime<Pilot.msWaitTime); // als de tijd
 			// dat hij moves gedaan heeft sinds detecteren van
@@ -358,6 +355,10 @@ class RobotPilot extends MovePilot {
 					Drive.lockSensor.notify();
 				}
 			}
+			}
+			if (angle!=0) {
+				rotateSensor(-angle);
+				angle = 0;
 			}
 		}
 	}
@@ -430,8 +431,13 @@ class DoPath implements Behavior {
 			if (Pilot.kapitein.pathCompleted()) {
 				System.out.println("Destination reached");
 				Pilot.kapitein.clearPath();
-				Sound.beepSequenceUp();
+				
 				Pilot.destinationReached = true;
+				Pilot.kapitein.getPoseProvider().setPose(Pilot.getNewPoseFromClient());
+				if (Pilot.kapitein.getPoseProvider().getPose().distanceTo(Pilot.goal)>100*Pilot.conversionFactor) {
+					Pilot.kapitein.goTo(Pilot.goal);					
+				}
+				Sound.beepSequenceUp();
 				System.exit(0);
 			}
 		}

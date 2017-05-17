@@ -403,11 +403,15 @@ public class Navigator implements WaypointListener
             while (_pilot.isMoving() && _keepGoing)Thread.yield(); 
             if(!_keepGoing) break;
           }
-          
+          poseProvider.setPose(Pilot.getNewPoseFromClient());
           _pose = poseProvider.getPose();
           System.out.println("pose na rotatie : "+_pose);
           if(!_keepGoing) break;
          
+          
+          
+          
+          
           if (_radius == 0) //differential pilot is used
         	  
           {
